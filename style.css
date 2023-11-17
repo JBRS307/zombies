@@ -1,0 +1,66 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+    cursor: none;
+}
+
+main {
+    transform: translate(-50%, -50%);
+    position: relative;
+    top: 50%;
+    left: 50%;
+    background-image: url("./assets/board-bg.jpg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 900px;
+    width: 1440px;
+}
+
+#aim {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: auto;
+    z-index: 1;
+}
+
+.top-bar {
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: space-between;
+    top: 15px;
+    height: 104px;
+}
+
+.lifebar {
+    display: inline-block;
+    margin-left: 15px;
+}
+
+.heart {
+    width: 100px;
+    height: auto;
+    user-select: none;
+}
+
+.points-container {
+    margin-right: 15px;
+}
+
+.points-container p {
+    color: white;
+    font-size: 7rem;
+    margin: 0;
+    font-weight: bold;
+    position: relative;
+    user-select: none;
+}
