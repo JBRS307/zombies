@@ -1,13 +1,20 @@
 const aim = document.getElementById('aim');
-const board = document.getElementById('board');
 const body = document.querySelector('body');
 const counter = document.getElementById('points-counter');
 const arena = document.querySelector('.arena');
+const gameOver = document.getElementById('gameover');
+const board = document.getElementById('board');
+const restart = document.getElementById('restart');
 
-const zombie = document.querySelector('.zombie');
+// const zombie = document.querySelector('.zombie');
 let points;
 let pointsStr = '';
 let lives;
+
+
+const randInt = () => {
+    return Math.floor(Math.random()*1000000000);
+}
 
 const init = () => {
     const hearts = document.querySelectorAll('.heart');
@@ -15,24 +22,27 @@ const init = () => {
         heart.setAttribute('draggable', false);
         if(heart.classList.contains('empty')) {
             heart.style.display = 'none';
+        } else {
+            heart.style.display = '';
         }
-        aim.style.top = '50vh';
-        aim.style.left = '50vw';
-        aim.setAttribute('draggable', false);
-        points = 30;
-        lives = 3;
-        counter.innerText = '00' + points;
     });
-
+    aim.style.top = '50vh';
+    aim.style.left = '50vw';
+    aim.setAttribute('draggable', false);
+    points = 30;
+    lives = 3;
+    counter.innerText = '00' + points;
+    gameOver.style.display = 'none';
+    gameOver.style.animationPlayState = 'paused';
 }
 
-document.addEventListener('mousemove', (e) => {
+const aimMovement = (e) => {
     aim.style.top = e.clientY+'px';
     aim.style.left = e.clientX+'px';
-});
+}
 
-board.addEventListener('click', (e) => {
-    if (points < 0) {
+const shot = (e) => {
+    if (points < 0 || lives <= 0) {
         return;
     }
 
@@ -54,7 +64,7 @@ board.addEventListener('click', (e) => {
     } else {
         counter.innerText = pointsStr;
     }
-});
+}
 
 const heartLoss = () => {
     lives -= 1;
@@ -63,39 +73,66 @@ const heartLoss = () => {
     let emptyHeart;
     switch (lives) {
         case 2:
-            heart = board.querySelector('#right-full');
-            emptyHeart = board.querySelector('#right-empty');
+            heart = document.getElementById('right-full');
+            emptyHeart = document.getElementById('right-empty');
+            heart.style.display = 'none';
+            emptyHeart.style.display = '';
             break;
         case 1:
-            heart = board.querySelector('#mid-full');
-            emptyHeart = board.querySelector('#mid-empty');
+            heart = document.getElementById('mid-full');
+            emptyHeart = document.getElementById('mid-empty');
+            heart.style.display = 'none';
+            emptyHeart.style.display = '';
             break;
         case 0:
-            return;
+            heart = document.getElementById('left-full');
+            emptyHeart = document.getElementById('left-empty');
+            heart.style.display = 'none';
+            emptyHeart.style.display = '';
+            removeAllEnemies();
     }
-
-    heart.style.display = 'none';
-    emptyHeart.style.display = '';
 }
 
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
+// funckaj jest wywołana dwa razy, żeby uniknąć sytuacji,
+// w której zombie pojawia się po końcu żyć
+const removeAllEnemies = () => {
+    const enemies = arena.querySelectorAll('.zombie');
+    enemies.forEach((zombie) => {
+        zombie.remove();
+    });
+}
+
+const finishGame = () => {
+    // const main = document.getElementById('board');
+    // board.style.backgroundImage = 'none';
+    // board.style.backgroundColor = 'black';
+    gameOver.style.display = 'flex';
+    gameOver.style.animationPlayState = 'running';
+}
+
 const generateEnemy = async () => {
     let sleepDuration;
     while (lives > 0) {
-        sleepDuration = Math.floor(Math.random()*2000+500);
+        sleepDuration = randInt()%1500+500;
         await sleep(sleepDuration);
         const zombie = document.createElement('div');
         zombie.classList.add('zombie');
         zombie.addEventListener('animationend', heartLoss);
         arena.appendChild(zombie);
-
     }
+    removeAllEnemies();
+    finishGame();
 }
 
-const game = () => {
+const startGame = () => {
     init();
     generateEnemy();
 }
 
-game();
+startGame();
+
+document.addEventListener('mousemove', (e) => aimMovement(e));
+board.addEventListener('click', (e) => shot(e));
+restart.addEventListener('click', () => startGame());

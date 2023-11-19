@@ -28,6 +28,37 @@ main {
     width: 1440px;
 }
 
+#gameover {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("./assets/gameover.png");
+    animation-name: fade-in;
+    animation-duration: 0.7s;
+    animation-timing-function: ease-in;
+    animation-fill-mode: forwards;
+    animation-play-state: paused;
+    position: relative;
+    top: 20px;
+}
+
+#gameover h2 {
+    font-family: 'blood';
+    font-size: 8rem;
+    color: white;
+    user-select: none;
+}
+
+@keyframes fade-in {
+    100% {
+        opacity: 1;
+    }
+}
+
 #aim {
     position: absolute;
     transform: translate(-50%, -50%);
