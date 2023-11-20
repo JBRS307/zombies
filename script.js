@@ -99,7 +99,7 @@ const shot = (e) => {
 }
 
 // cooldown na strzelanie
-const throttleShooting = throttle(shot, 1200);
+const throttleShooting = throttle(shot, 300);
 
 // obsługa utraty żyć jeśli zombie dojdzie na koniec mapy
 const heartLoss = () => {
