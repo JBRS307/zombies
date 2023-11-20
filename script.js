@@ -12,6 +12,10 @@ let points;
 let pointsStr = '';
 let lives;
 
+const weaponDiff = new Array();
+const speedDiff = new Array(); 
+const freqDiffUpper = new Array(); 
+const freqDiffLower = new Array(); // zmienne odpowiadające za poziom trudności, trudność rośnie z czasem
 
 const randInt = () => {
     return Math.floor(Math.random()*1000000000);
@@ -48,6 +52,10 @@ const initGame = () => {
     counter.innerText = '00' + points;
     gameOver.style.display = 'none';
     gameOver.style.animationPlayState = 'paused';
+    freqDiffUpper = 0;
+    freqDiffLower = 0;
+    speedDiff = 0;
+    weaponDiff = 0;
     board.addEventListener('click', throttleShooting);
 }
 
@@ -57,7 +65,7 @@ const aimMovement = (e) => {
     aim.style.left = e.clientX+'px';
 }
 
-// generalna funkcja do cooldownu
+// generalna funkcja do cooldownu broni
 const throttle = (func, delay) => {
     let timerFlag = null;
     
@@ -66,7 +74,7 @@ const throttle = (func, delay) => {
             func(...args);
             timerFlag = setTimeout(() => {
                 timerFlag = null;
-            }, delay);
+            }, delay + weaponDiff);
         }
     }
 }
@@ -99,12 +107,37 @@ const shot = (e) => {
 }
 
 // cooldown na strzelanie
-const throttleShooting = throttle(shot, 1200);
+const throttleShooting = throttle(shot, 300);
+
+const changeWeaponDiff = async () => {
+    while (lives > 0 && weaponDiff < 400) {
+        await sleep(90000);
+        weaponDiff += 200;
+        console.log(weaponDiff);
+    }
+}
+
+const changeSpeedDiff = async () => {
+    while (lives > 0 && speedDiff < 11000) {
+        await sleep(60000);
+        speedDiff += 2200;
+        console.log(speedDiff);
+    }
+}
+
+const changeFreqDiff = async () => {
+    while (lives > 0 && freqDiffUpper < 1500) {
+        await sleep(60000);
+        freqDiffUpper += 300;
+        freqDiffLower += 100;
+        console.log(freqDiffUpper, freqDiffLower);
+    }
+}
 
 // obsługa utraty żyć jeśli zombie dojdzie na koniec mapy
-const heartLoss = () => {
+const heartLoss = (e) => {
     lives -= 1;
-    
+    e.target.remove();
     let heart;
     let emptyHeart;
     switch (lives) {
@@ -171,7 +204,7 @@ const randomizeScale = (zombie) => {
 
 // funkcja randomizująca szybkość poruszania zombie
 const randomizeSpeed = (zombie) => {
-    const walkTime = randInt()%12001 + 3000;
+    const walkTime = randInt()%(12001 - speedDiff) + 3000;
     zombie.style.animationDuration = '1s, ' + walkTime + 'ms'; 
 }
 
@@ -190,19 +223,26 @@ const createZombie = () => {
     randomizeSpeed(zombie);
     randomizeVert(zombie);
     zombie.addEventListener('animationend', heartLoss);
+    // zombie.addEventListener('animationend', zombieTester); // używane w celu testowania poziomu trudności
     arena.appendChild(zombie);
 }
 
-// funkcja generująca zombie w losowych odstępach czasu (0.5 do 2.5 sekundy)
+// funkcja generująca zombie w losowych odstępach czasu (0.5 do 2.5 sekundy na najniższym poziomie)
 const generateEnemy = async () => {
     let sleepDuration;
     while (lives > 0) {
-        sleepDuration = randInt()%2001+500;
+        sleepDuration = randInt()%(3001 - freqDiffUpper) + (1000 - freqDiffLower);
         await sleep(sleepDuration);
         createZombie();
     }
     removeHeartLoss();
     finishGame();
+}
+
+// wywala zombie, żeby nie stackowało się milion divów, kiedy wyłączona jest
+// utrata żyć do testów
+const zombieTester = (e) => {
+    e.target.remove();
 }
 
 // restart gry
@@ -224,6 +264,9 @@ const startFromMenu = (e) => {
 const startGame = () => {
     removeAllEnemies();
     initGame();
+    changeFreqDiff();
+    changeSpeedDiff();
+    changeWeaponDiff();
     generateEnemy();
 }
 

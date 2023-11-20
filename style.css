@@ -5,7 +5,7 @@ html, body {
 }
 
 * {
-    cursor: none;
+    /* cursor: none; */
 }
 
 body {
@@ -188,7 +188,7 @@ main {
     }
 }
 
-@media (max-width: 1440px) or (max-height: 900px) {
+/* @media (max-width: 1440px) or (max-height: 900px) {
     * {
         cursor: default;
     }
@@ -204,4 +204,4 @@ main {
     #aim {
         display: none;
     }
-}
+} */
