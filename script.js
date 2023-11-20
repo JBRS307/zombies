@@ -13,6 +13,7 @@ let pointsStr = '';
 let lives;
 
 
+
 const randInt = () => {
     return Math.floor(Math.random()*1000000000);
 }
@@ -57,7 +58,7 @@ const aimMovement = (e) => {
     aim.style.left = e.clientX+'px';
 }
 
-// generalna funkcja do cooldownu
+// generalna funkcja do cooldownu broni
 const throttle = (func, delay) => {
     let timerFlag = null;
     
@@ -99,12 +100,12 @@ const shot = (e) => {
 }
 
 // cooldown na strzelanie
-const throttleShooting = throttle(shot, 300);
+const throttleShooting = throttle(shot, 500);
 
 // obsługa utraty żyć jeśli zombie dojdzie na koniec mapy
-const heartLoss = () => {
+const heartLoss = (e) => {
     lives -= 1;
-    
+    e.target.remove();
     let heart;
     let emptyHeart;
     switch (lives) {
@@ -170,8 +171,8 @@ const randomizeScale = (zombie) => {
 }
 
 // funkcja randomizująca szybkość poruszania zombie
-const randomizeSpeed = (zombie) => {
-    const walkTime = randInt()%12001 + 3000;
+const randomizeSpeed = (zombie, difficulty) => {
+    const walkTime = randInt()%(12001 - difficulty.speed) + 3000;
     zombie.style.animationDuration = '1s, ' + walkTime + 'ms'; 
 }
 
@@ -183,26 +184,33 @@ const randomizeVert = (zombie) => {
 }
 
 // funkcja tworząca zombie i wrzucająca go na arenę
-const createZombie = () => {
+const createZombie = (difficulty) => {
     const zombie = document.createElement('div');
     zombie.classList.add('zombie');
     randomizeScale(zombie);
-    randomizeSpeed(zombie);
+    randomizeSpeed(zombie, difficulty);
     randomizeVert(zombie);
     zombie.addEventListener('animationend', heartLoss);
+    // zombie.addEventListener('animationend', zombieTester); // używane w celu testowania poziomu trudności
     arena.appendChild(zombie);
 }
 
-// funkcja generująca zombie w losowych odstępach czasu (0.5 do 2.5 sekundy)
-const generateEnemy = async () => {
+// funkcja generująca zombie w losowych odstępach czasu
+const generateEnemy = async (difficulty) => {
     let sleepDuration;
     while (lives > 0) {
-        sleepDuration = randInt()%2001+500;
+        sleepDuration = randInt()%(1501 - difficulty.freqUpper) + (1000 - difficulty.freqLower);
         await sleep(sleepDuration);
-        createZombie();
+        createZombie(difficulty);
     }
     removeHeartLoss();
     finishGame();
+}
+
+// wywala zombie, żeby nie stackowało się milion divów, kiedy wyłączona jest
+// utrata żyć do testów
+const zombieTester = (e) => {
+    e.target.remove();
 }
 
 // restart gry
@@ -222,9 +230,32 @@ const startFromMenu = (e) => {
 
 // początek rundy
 const startGame = () => {
+    const difficulty = {
+        freqLower: 0,
+        freqUpper: 0,
+        speed: 0,
+        changeSpeed: async function() {
+            while (lives > 0 && this.speed < 11000) {
+                await sleep(30000);
+                this.speed += 2250;
+                // console.log(this.speed);
+            }
+        },
+        changeFreq: async function() {
+            while (lives > 0 && this.freqLower < 600) {
+                await sleep(30000);
+                this.freqLower += 120;
+                this.freqUpper += 200;
+                // console.log(this.freqLower);
+            }
+        }
+    };
+
     removeAllEnemies();
     initGame();
-    generateEnemy();
+    difficulty.changeFreq();
+    difficulty.changeSpeed();
+    generateEnemy(difficulty);
 }
 
 initPage();

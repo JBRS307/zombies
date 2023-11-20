@@ -105,6 +105,20 @@ main {
     user-select: none;
 }
 
+#gameover button {
+    border: none;
+    background-color: transparent;
+    height: 60px;
+    width: 200px;
+    font-size: 2.5rem;
+    font-family: 'blood';
+    color: white;
+}
+
+#gameover button:hover {
+    color: lightgray;
+}
+
 @keyframes fade-in {
     100% {
         opacity: 1;
@@ -188,7 +202,7 @@ main {
     }
 }
 
-@media (max-width: 1440px) or (max-height: 900px) {
+/* @media (max-width: 1440px) or (max-height: 900px) {
     * {
         cursor: default;
     }
@@ -204,4 +218,4 @@ main {
     #aim {
         display: none;
     }
-}
+} */
