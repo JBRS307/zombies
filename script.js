@@ -12,10 +12,7 @@ let points;
 let pointsStr = '';
 let lives;
 
-const weaponDiff = new Array();
-const speedDiff = new Array(); 
-const freqDiffUpper = new Array(); 
-const freqDiffLower = new Array(); // zmienne odpowiadające za poziom trudności, trudność rośnie z czasem
+
 
 const randInt = () => {
     return Math.floor(Math.random()*1000000000);
@@ -52,10 +49,6 @@ const initGame = () => {
     counter.innerText = '00' + points;
     gameOver.style.display = 'none';
     gameOver.style.animationPlayState = 'paused';
-    freqDiffUpper = 0;
-    freqDiffLower = 0;
-    speedDiff = 0;
-    weaponDiff = 0;
     board.addEventListener('click', throttleShooting);
 }
 
@@ -74,7 +67,7 @@ const throttle = (func, delay) => {
             func(...args);
             timerFlag = setTimeout(() => {
                 timerFlag = null;
-            }, delay + weaponDiff);
+            }, delay);
         }
     }
 }
@@ -107,32 +100,7 @@ const shot = (e) => {
 }
 
 // cooldown na strzelanie
-const throttleShooting = throttle(shot, 300);
-
-const changeWeaponDiff = async () => {
-    while (lives > 0 && weaponDiff < 400) {
-        await sleep(90000);
-        weaponDiff += 200;
-        console.log(weaponDiff);
-    }
-}
-
-const changeSpeedDiff = async () => {
-    while (lives > 0 && speedDiff < 11000) {
-        await sleep(60000);
-        speedDiff += 2200;
-        console.log(speedDiff);
-    }
-}
-
-const changeFreqDiff = async () => {
-    while (lives > 0 && freqDiffUpper < 1500) {
-        await sleep(60000);
-        freqDiffUpper += 300;
-        freqDiffLower += 100;
-        console.log(freqDiffUpper, freqDiffLower);
-    }
-}
+const throttleShooting = throttle(shot, 500);
 
 // obsługa utraty żyć jeśli zombie dojdzie na koniec mapy
 const heartLoss = (e) => {
@@ -203,8 +171,8 @@ const randomizeScale = (zombie) => {
 }
 
 // funkcja randomizująca szybkość poruszania zombie
-const randomizeSpeed = (zombie) => {
-    const walkTime = randInt()%(12001 - speedDiff) + 3000;
+const randomizeSpeed = (zombie, difficulty) => {
+    const walkTime = randInt()%(12001 - difficulty.speed) + 3000;
     zombie.style.animationDuration = '1s, ' + walkTime + 'ms'; 
 }
 
@@ -216,24 +184,24 @@ const randomizeVert = (zombie) => {
 }
 
 // funkcja tworząca zombie i wrzucająca go na arenę
-const createZombie = () => {
+const createZombie = (difficulty) => {
     const zombie = document.createElement('div');
     zombie.classList.add('zombie');
     randomizeScale(zombie);
-    randomizeSpeed(zombie);
+    randomizeSpeed(zombie, difficulty);
     randomizeVert(zombie);
     zombie.addEventListener('animationend', heartLoss);
     // zombie.addEventListener('animationend', zombieTester); // używane w celu testowania poziomu trudności
     arena.appendChild(zombie);
 }
 
-// funkcja generująca zombie w losowych odstępach czasu (0.5 do 2.5 sekundy na najniższym poziomie)
-const generateEnemy = async () => {
+// funkcja generująca zombie w losowych odstępach czasu
+const generateEnemy = async (difficulty) => {
     let sleepDuration;
     while (lives > 0) {
-        sleepDuration = randInt()%(3001 - freqDiffUpper) + (1000 - freqDiffLower);
+        sleepDuration = randInt()%(1501 - difficulty.freqUpper) + (1000 - difficulty.freqLower);
         await sleep(sleepDuration);
-        createZombie();
+        createZombie(difficulty);
     }
     removeHeartLoss();
     finishGame();
@@ -262,12 +230,32 @@ const startFromMenu = (e) => {
 
 // początek rundy
 const startGame = () => {
+    const difficulty = {
+        freqLower: 0,
+        freqUpper: 0,
+        speed: 0,
+        changeSpeed: async function() {
+            while (lives > 0 && this.speed < 11000) {
+                await sleep(30000);
+                this.speed += 2250;
+                // console.log(this.speed);
+            }
+        },
+        changeFreq: async function() {
+            while (lives > 0 && this.freqLower < 600) {
+                await sleep(30000);
+                this.freqLower += 120;
+                this.freqUpper += 200;
+                // console.log(this.freqLower);
+            }
+        }
+    };
+
     removeAllEnemies();
     initGame();
-    changeFreqDiff();
-    changeSpeedDiff();
-    changeWeaponDiff();
-    generateEnemy();
+    difficulty.changeFreq();
+    difficulty.changeSpeed();
+    generateEnemy(difficulty);
 }
 
 initPage();
