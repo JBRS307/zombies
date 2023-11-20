@@ -181,6 +181,7 @@ const randomizeSpeed = (zombie, difficulty) => {
 const randomizeVert = (zombie) => {
     const position = randInt()%101;
     zombie.style.top = position + '%';
+    zombie.style.zIndex = 1+position+''; // dzięki temu zombie nie będą na siebie dziwnie nachodzić
 }
 
 // funkcja tworząca zombie i wrzucająca go na arenę
