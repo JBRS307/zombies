@@ -1,0 +1,1 @@
+Bazowa wersja gry spełniająca wymagania z PDFa, bez żadnych dodatków.
