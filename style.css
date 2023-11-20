@@ -4,11 +4,26 @@ html, body {
     border: 0;
 }
 
+* {
+    cursor: none;
+}
+
 body {
     width: 100vw;
     height: 100vh;
     background-color: black;
-    /* cursor: none; */
+}
+
+#no-phones {
+    font-size: 14rem;
+    font-family: 'blood';
+    text-align: center;
+    width: 100%;
+    position: relative;
+    transform: translateY(-50%);
+    top: 50%;
+    color: white;
+    display: none;
 }
 
 main {
@@ -26,6 +41,41 @@ main {
     background-position: center;
     height: 900px;
     width: 1440px;
+    margin: 0;
+}
+
+#menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    position: absolute;
+    z-index: 3;
+    height: 100%;
+    width: 100%;
+    background-image: url("./assets/board-bg.jpg");
+    background-size: contain;
+}
+
+#menu h1 {
+    font-family: 'blood';
+    font-size: 10rem;
+    color: white;
+    user-select: none;
+}
+
+#menu button {
+    border: none;
+    background-color: white;
+    height: 60px;
+    width: 200px;
+    border-radius: 15px;
+    font-size: 2.5rem;
+    font-family: 'blood';
+}
+
+#menu button:hover {
+    background-color: lightgray;
 }
 
 #gameover {
@@ -35,15 +85,17 @@ main {
     justify-content: center;
     opacity: 0;
     width: 100%;
-    height: 100%;
+    height: 70%;
     background-image: url("./assets/gameover.png");
+    background-size: cover;
     animation-name: fade-in;
     animation-duration: 0.7s;
     animation-timing-function: ease-in;
     animation-fill-mode: forwards;
     animation-play-state: paused;
-    position: relative;
-    top: 20px;
+    position: absolute;
+    top: 120px;
+    z-index: 2;
 }
 
 #gameover h2 {
@@ -110,6 +162,7 @@ main {
     /* background-color: white; służy do ustawienia */
 }
 
+/* parametry są generalnie randomizowane, tu są ustawione defaultowe, głównie używane przed napisaniem randomizacji */
 .zombie {
     position: absolute;
     left: 100%;
@@ -117,18 +170,38 @@ main {
     height: 312px;
     width: 200px;
     transform: translateY(-100%);
-    background: url("./assets/zombie.png") 0 0; /* zombie ma szerokość 200px */
-    animation: move 1s 0s infinite steps(10), zombiePosition 10s 0s 1 linear;
+    background-image: url("./assets/zombie.png"); /* zombie ma szerokość 200px */
+    background-position: 0 0;
+    background-size: cover;
+    animation: move 1s 0s infinite steps(10), zombie-position 10s 0s 1 linear;
 }
 
 @keyframes move {
     100% {
-        background-position: -2000px 0;
+        background-position: -1000% 0;
     }
 }
 
-@keyframes zombiePosition {
+@keyframes zombie-position {
     100% {
         left: 0%;
+    }
+}
+
+@media (max-width: 1440px) or (max-height: 900px) {
+    * {
+        cursor: default;
+    }
+
+    main {
+        display: none;
+    }
+
+    #no-phones {
+        display: block;
+    }
+
+    #aim {
+        display: none;
     }
 }

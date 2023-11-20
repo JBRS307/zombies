@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- UWAGA: działa tylko na ekranach o wysokości co najmiej 900px i szerokości co najmniej 1440px -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./style.css">
@@ -9,10 +10,15 @@
 </head>
 <body>
 
+    <h1 id="no-phones">YOU NEED A BIGGER SCREEN</h1>
+
     <img id="aim" src="./assets/aim.png" />
     <main id="board">
-        <div class="menu" style="display: none;">
-            <!-- menu się bedę martwił później -->
+        <div id="menu">
+            <h1>KILL THE ZOMBIES</h1>
+            <button>
+                START
+            </button>
         </div>
         <!-- <img id="aim" src="./assets/aim.png" /> -->
         <section class="top-bar">
@@ -33,7 +39,7 @@
 
         <section id="gameover">
             <h2>Game Over</h2>
-            <button id="restart">
+            <button>
                 Play Again
             </button>
         </section>
