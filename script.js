@@ -210,9 +210,9 @@ const generateEnemy = async (difficulty) => {
 
 // wywala zombie, żeby nie stackowało się milion divów, kiedy wyłączona jest
 // utrata żyć do testów
-const zombieTester = (e) => {
-    e.target.remove();
-}
+// const zombieTester = (e) => {
+//     e.target.remove();
+// }
 
 // restart gry
 const restartGame = (e) => {
