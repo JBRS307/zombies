@@ -1,4 +1,8 @@
-i. Zombie pojawiają się tylko w dolnym pasie, żeby nie latały.
-ii. Na strzelanie jest cooldown 0.5s.
-iii. Poziom trudności rośnie z czasem (zombie przyspieszają i jest ich więcej).
-iv. Ekran musi mieć co najmniej 1440px szerokości i 900px wysokości, inaczej się nie włączy
+# Zombie shooter
+Game was done as a part of 2023 Introduction to Web Applications course on AGH university.
+
+It's a very simple shooter with difficulty increasing over time (more small zombies which move faster).
+
+Game is not meant to be played on screens smaller than 1440x900 and will not load.
+
+Playable [here](https://jbrs307.github.io/zombies/).
